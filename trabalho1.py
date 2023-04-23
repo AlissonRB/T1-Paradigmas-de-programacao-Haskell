@@ -275,10 +275,15 @@ def resolver_kojun():
     # regioes: uma lista de regioes, com cada regiao = [casas da regiao] [casas disponiveis] [numeros regiao] [numeros faltantes]
     regioes = criar_regioes(lista_regioes)
 
+    print("Tabuleiro inserido: ")
     printar_tabuleiro(matriz)
     regioes, matriz = uma_casa_possivel(regioes, matriz)
-    regioes, matriz = uma_casa_possivel(regioes, matriz)  
+    regioes, matriz = uma_casa_possivel(regioes, matriz)
+    print("Tabuleiro resolvido: ")
+    printar_tabuleiro(matriz)  
 
+
+#kojun nº43
 resolver_kojun()
 
 
