@@ -79,12 +79,20 @@ class Elemento:
     def verificar_acima(self):
         x = self.cord[0]
         y = self.cord[1]
-        if matriz[x-1][y].valor != 0:
-            if x != 0 : # evita index_error
-                if matriz[x-1][y].id_area == self.id_area:
-                    possiveis  = [x for x in self.valores_possiveis if x < matriz[x-1][y].valor]
+        if x != 0 : # evita index_error
+            acima = matriz[x-1][y]
+            if acima.valor != 0:
+                if acima.id_area == self.id_area:
+                    possiveis  = [z for z in self.valores_possiveis if z < acima.valor]
                     if len(possiveis) == 1:
                         self.valores_possiveis.remove(possiveis[0])
+                        self.setCell(possiveis[0])
+                        return True
+            else:
+                if acima.id_area == self.id_area:
+                    possiveis = self.valores_possiveis
+                    possiveis.pop()
+                    if len(possiveis) == 1:
                         self.setCell(possiveis[0])
                         return True
         return False
@@ -94,9 +102,13 @@ class Elemento:
         y = self.cord[1]
         if x < len(matriz)-1:
             if matriz[x+1][y].id_area == self.id_area:
+                # O valor abaixo é 1 a menos que o maior possivel pra aquela célula
                 if matriz[x+1][y].valor == self.valores_possiveis[-1] -1:
                     self.setCell(self.valores_possiveis[-1])
                     return True
+                #O valor abaixo é um a menos que o tamanho da matriz:
+                if matriz[x+1][y].valor == self.tam_area - 1:
+                    self.setCell(self.valores_possiveis[-1])
         return False
         
     def area_1(self):
@@ -194,23 +206,18 @@ class Elemento:
         self.valores_possiveis = []
         self.tirar_possibilidades()
     
+def instancia_exemplo(entry):
+    matriz = [[0 for i in range(len(entry))] for i in range(len(entry))]
+    
+    for i in range(len(entry)):
+        for j in range(len(entry)):
+            casa = Elemento(*list(entry[i][j]))
+            matriz[i][j] = casa
+            areas[entry[i][j][2]-100].append(matriz[i][j])
+    return matriz
+
+
 #exemplo1 - 6x6
-'''
-area100 = []
-area101 = []
-area102 = []
-area103 = []
-area104 = []
-area105 = []
-area106 = []
-area107 = []
-area108 = []
-area109 = []
-area110 = []
-areas = [area100, area101, area102, area103, area104, area105, area106, area107, area108, area109, area110]
-'''
-
-
 
 exemplo1 = [[(2, (0, 0), 100, 2, False, []), (0 , (0, 1), 100, 2, False, []), (0, (0, 2), 101, 3, False, []), (0, (0, 3), 101, 3, False, []), (1, (0, 4), 101, 3, False, []), (0, (0, 5), 102, 2, False, [])],
  [(0, (1, 0), 103, 6, False, []), (0, (1, 1), 103, 6, False, []), (0, (1, 2), 103, 6, False, []), (3, (1, 3), 103, 6, False, []), (0, (1, 4), 103, 6, False, []), (0, (1, 5), 102, 2, False, [])],
@@ -234,31 +241,15 @@ exemplo2 = [[(4, (0, 0), 100, 4, False, []), (0, (0, 1), 100, 4, False, []), (4,
             [(2, (8, 0), 104, 5, False, []), (5, (8, 1), 104, 5, False, []), (0, (8, 2), 109, 4, False, []), (1, (8, 3), 110, 4, False, []), (2, (8, 4), 110, 4, False, []), (0, (8, 5), 110, 4, False, []), (2, (8, 6), 111, 4, False, []), (0, (8, 7), 121, 6, False, []), (3, (8, 8), 121, 6, False, []), (0, (8, 9), 122, 4, False, [])], 
             [(1, (9, 0), 104, 5, False, []), (0, (9, 1), 104, 5, False, []), (0, (9, 2), 109, 4, False, []), (2, (9, 3), 109, 4, False, []), (4, (9, 4), 111, 4, False, []), (0, (9, 5), 111, 4, False, []), (1, (9, 6), 111, 4, False, []), (2, (9, 7), 121, 6, False, []), (0, (9, 8), 121, 6, False, []), (5, (9, 9), 121, 6, False, [])]]
 
+#Exemplo1
+#qnt_areas = 11
+#Exemplo2
 qnt_areas = 27
 
 areas = [[]for i in range(qnt_areas)]
 
-def instancia_exemplo(entry):
-    matriz = [[0 for i in range(len(entry))] for i in range(len(entry))]
-    
-    for i in range(len(entry)):
-        for j in range(len(entry)):
-            casa = Elemento(*list(entry[i][j]))
-            matriz[i][j] = casa
-            areas[entry[i][j][2]-100].append(matriz[i][j])
-    return matriz
-
 matriz = instancia_exemplo(exemplo2)
 print(areas)
-'''
-for i in range(len(exemplo1)):
-    for j in range(len(exemplo1)):
-        #list(exemplo1[i][j]).append([])   #Adiciona lista de valores possiveis ao elemento
-        casa = Elemento(*list(exemplo1[i][j])) #Instancia a celula da matriz como um elemento
-        matriz[i][j]= casa
-           #Adiciona a instancia na matriz
-        areas[exemplo1[i][j][2]-100].append(matriz[i][j])
-'''
 print(matriz)
 m = 0
 
