@@ -1,4 +1,4 @@
-from kojun_entrys import exemplo1, areas, matriz
+from kojun_entrys import matriz
 
 
 '''
@@ -26,28 +26,6 @@ no quadrado superior deve ser maior que o número no inferior.
     colocado em uma casa, ou seja, ele só pertence a lista de possibilidades
     de uma casa, então ele deve ser inserido nela.
     '''
-
-def complete_2(elemento):
-    if elemento.tam_area == 2 and not elemento.area_complete:
-        #buscar completar adjacente:
-        if valor == 0 and len(areas[elemento.id_area-100][-1]) == 1: # se na casa possui zero e apenas 1 possível valor 
-            valor = 1
-            exemplo1[elemento.cord[0], elemento.cord[1]][0] = 1 # atribui o 1 a aquela casa na matriz
-    return True
-
-def verificar_abaixo(elemento):
-    if areas[elemento.id_area-100][-1][0] == 1:  # Se 1 ainda é um número possível.
-        x = elemento.cord[0]
-        y = elemento.cord[1]
-        if y < elemento.tam_area: # evita index_error
-            if exemplo1[x][y+1][2] == elemento.id_area:
-                elemento.valores_possiveis.remove(1)
-        
-
-def area_1(elemento):
-    if elemento.tam_area == 1:
-        elemento.valor = 1
-    return True
 
 for i in range(len(matriz)):
     print(f"{i+1}: ", end='')
@@ -78,12 +56,3 @@ while not complete:
             print(f"{i+1}: ", end='')
             for j in range(len(matriz)):
                 print(matriz[i][j].valor,',' if j < len(matriz)-1 else '', end='' if j < len(matriz)-1 else '\n')
-
-        
-
-
-'''for i in range(len(matriz)):
-        print(f"{i+1}: ", end='')
-        for j in range(len(matriz)):
-            print(matriz[i][j].valor,',' if j < len(matriz)-1 else '', end='' if j < len(matriz)-1 else '\n')
-'''
