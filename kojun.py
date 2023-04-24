@@ -62,20 +62,22 @@ while not complete:
             if (matriz[i][j]).trySolve():
                 print()
                 print(f"i = {i}; j = {j}")
-                for i in range(len(matriz)):
-                    print(f"{i+1}: ", end='')
-                    for j in range(len(matriz)):
-                        print(matriz[i][j].valor,',' if j < len(matriz)-1 else '', end='' if j < len(matriz)-1 else '\n')
+                for x in range(len(matriz)):
+                    print(f"{x+1}: ", end='')
+                    for y in range(len(matriz)):
+                        print(f"{matriz[x][y].valor}, {',' if y < len(matriz)-1 else ''}", end='' if y < len(matriz)-1 else '\n')
             else:
                 if matriz[i][j].valor == 0:
                     complete = False
                     achou_incompleto = True
     if not achou_incompleto:
         complete = True
-    for i in range(len(matriz)):
-        print(f"{i+1}: ", end='')
-        for j in range(len(matriz)):
-            print(matriz[i][j].valor,',' if j < len(matriz)-1 else '', end='' if j < len(matriz)-1 else '\n')
+        print()
+        print("Matriz esperada:")
+        for i in range(len(matriz)):
+            print(f"{i+1}: ", end='')
+            for j in range(len(matriz)):
+                print(matriz[i][j].valor,',' if j < len(matriz)-1 else '', end='' if j < len(matriz)-1 else '\n')
 
         
 
