@@ -1,24 +1,14 @@
 class Elemento:
     def __init__(self, valor:int, cord:list, id_area:int, tam_area:int, area_complete:bool, valores_possiveis:list):
-        self.valor = valor
-        self.cord = cord
-        self.id_area = id_area
-        self.tam_area = tam_area
-        self.area_complete = area_complete
-        self.valores_possiveis = valores_possiveis
+        self.valor = valor #valor int da casa
+        self.cord = cord # tupla de valores referentes a linha e coluna do elemento na matriz --> (x, y)
+        self.id_area = id_area # id da area, usado para acessar os elementos de uma mesma área 
+        self.tam_area = tam_area # valor int que informa o tamanho da área, utilizado para saber quais números podem ser inseridos ali
+        self.area_complete = area_complete  
+        self.valores_possiveis = valores_possiveis  # lista de valores possíveis para aquela casa(célula)
 
-    def complete_2(self):
-        if self.tam_area == 2 and not self.area_complete:
-            area = areas[self.id_area-100]
-            #buscar completar adjacente:
-            if self.valor == 0:
-                if len(area[-1]) == 1: # se na casa possui zero e apenas 1 possível valor 
-                    self.setCell(area[-1])
-                #elif len(area[-1]) == 2:
-    
     def complete_unico(self):
-        area = areas[self.id_area-100]
-        #buscar completar adjacente:
+        '''Função que ve se a quantidade de valores_possiveis pra serem inseridos naquela célula é 1, se for, o insere nela.'''
         if self.valor == 0:
             if len(self.valores_possiveis) == 1: # se na casa possui zero e apenas 1 possível valor 
                 self.setCell(self.valores_possiveis[0])
@@ -32,44 +22,41 @@ class Elemento:
         y = self.cord[1]
         if y != 0:
             #esquerda
+            esquerda = matriz[x][y-1]
             try:
-                if matriz[x][y-1].valor == 0:
-                    matriz[x][y-1].valores_possiveis.remove(self.valor) 
-                    if len(matriz[x][y-1].valores_possiveis) == 1:
-                        matriz[x][y-1].setCell(matriz[x][y-1].valores_possiveis[0])
+                if esquerda.valor == 0:
+                    esquerda.valores_possiveis.remove(self.valor) 
+                    esquerda.complete_unico()
             except ValueError:
-                if len(matriz[x][y-1].valores_possiveis) == 1:
-                    matriz[x][y-1].setCell(matriz[x][y-1].valores_possiveis[0])
+                esquerda.complete_unico()
         if y < len(matriz)-1:
             #direita
+            direita = matriz[x][y+1]
             try:
-                if matriz[x][y+1].valor == 0:
-                    matriz[x][y+1].valores_possiveis.remove(self.valor)
-                    if len(matriz[x][y+1].valores_possiveis) == 1:
-                        matriz[x][y+1].setCell(matriz[x][y+1].valores_possiveis[0])
+                if direita.valor == 0:
+                    direita.valores_possiveis.remove(self.valor)
+                    direita.complete_unico()
             except ValueError:
-                if len(matriz[x][y+1].valores_possiveis) == 1:
-                    matriz[x][y+1].setCell(matriz[x][y+1].valores_possiveis[0])
+                direita.complete_unico()
         if x != 0:
             #cima
+            acima = matriz[x-1][y]
             try:
-                if matriz[x-1][y].valor == 0:
-                    matriz[x-1][y].valores_possiveis.remove(self.valor)
-                    if len(matriz[x-1][y].valores_possiveis) == 1:
-                        matriz[x-1][y].setCell(matriz[x-1][y].valores_possiveis[0])
+                if acima.valor == 0:
+                    acima.valores_possiveis.remove(self.valor)
+                    acima.complete_unico()
             except ValueError:
-                if len(matriz[x-1][y].valores_possiveis) == 1:
-                    matriz[x-1][y].setCell(matriz[x-1][y].valores_possiveis[0])
+                acima.complete_unico()
         if x < len(matriz)-1:
             #baixo
+            abaixo = matriz[x+1][y]
             try:
-                if matriz[x+1][y].valor == 0:
-                    matriz[x+1][y].valores_possiveis.remove(self.valor)
-                    if len(matriz[x+1][y].valores_possiveis) == 1:
-                        matriz[x+1][y].setCell(matriz[x+1][y].valores_possiveis[0])
+                if abaixo.valor == 0:
+                    abaixo.valores_possiveis.remove(self.valor)
+                    abaixo.complete_unico()
             except ValueError:
-                if len(matriz[x+1][y].valores_possiveis) == 1:
-                    matriz[x+1][y].setCell(matriz[x+1][y].valores_possiveis[0])
+                abaixo.complete_unico()
+
         for elemento in areas[self.id_area-100]:
             if type(elemento) != list:
                 if self.valor in elemento.valores_possiveis:
@@ -77,18 +64,25 @@ class Elemento:
         areas[self.id_area-100][-1].append(self.valor)
     
     def verificar_acima(self):
+        # Nessa função são realizados dois procedimentos, um caso o valor acima seja diferente e 0 e outro caso contrário.
         x = self.cord[0]
         y = self.cord[1]
         if x != 0 : # evita index_error
             acima = matriz[x-1][y]
             if acima.valor != 0:
                 if acima.id_area == self.id_area:
+                    '''Primeiro: É criado uma lista chamada de 'possiveis' para armazenar os valores que aquela casa pode assumir com base no valor da casa acima,
+                    ou seja, dos valores presentes em 'valores_possiveis', só poderam ser inseridos naquela casa aqueles que são menores do que o valor da casa
+                    acima, já que um valor menor acima de outro maior(na mesma área) não é permitido'''
                     possiveis  = [z for z in self.valores_possiveis if z < acima.valor]
                     if len(possiveis) == 1:
                         self.valores_possiveis.remove(possiveis[0])
                         self.setCell(possiveis[0])
                         return True
             else:
+                '''Segundo: Caso o valor acima seja 0 e a casa acima seja da mesma área que a casa atual, significa que o valor acima necessariamente precisa ser
+                maior que o valor da casa atual, então é verificado se caso tirarmos o maior valor de 'valores_possiveis' resta apenas um valor possível, então ele
+                é o único possível de ser inserido naquela casa, e consequentemento o valor maior que foi retirado é o da casa acima'''
                 if acima.id_area == self.id_area:
                     possiveis = self.valores_possiveis
                     possiveis.pop()
@@ -101,16 +95,18 @@ class Elemento:
         x = self.cord[0]
         y = self.cord[1]
         if x < len(matriz)-1:
-            if matriz[x+1][y].id_area == self.id_area:
+            abaixo = matriz[x+1][y]
+            if abaixo.id_area == self.id_area:
                 # O valor abaixo é 1 a menos que o maior possivel pra aquela célula
-                if matriz[x+1][y].valor == self.valores_possiveis[-1] -1:
+                if abaixo.valor == self.valores_possiveis[-1] -1:
                     self.setCell(self.valores_possiveis[-1])
                     return True
                 #O valor abaixo é um a menos que o tamanho da matriz:
-                if matriz[x+1][y].valor == self.tam_area - 1:
+                if abaixo.valor == self.tam_area - 1:
                     self.setCell(self.valores_possiveis[-1])
         return False
         
+    #No caso em que a área tem tamanho 1, só pode ser inserido o número 1 naquela casa
     def area_1(self):
         if self.tam_area == 1:
             self.setCell(1)
@@ -119,8 +115,13 @@ class Elemento:
         return False
     
     def last_possible(self):
-        area = areas[self.id_area-100]
+        area = areas[self.id_area-100] # define variável 'area' como a area atual daquela célula
+        '''Define um contador que é uma lista composta por 0 do tamanho da área, sou seja, a função vai varrer todos os elementos presentes naquela área
+        e caso algum número só possa ser inserido em uma célula, ou seja, ou verificar os 'valores_possiveis' de todas as células um número só aparece nessas listas
+        de valores possiveis apenas uma vez, então ele só pode ser inserido naquela célula, de acordo com o progresso do algoritmo que foi tirando as possibilidades
+        de alguns números estarem estarem em certas casas devido às regras do jogo'''
         cnt = [0]*self.tam_area
+        #Exemplo(matriz 6x6): cnt = [0, 1, 2, 0, 2, 0] quer dizer que o numero 2(segunda posição) só pode ser inserido em uma celula
         for elemento in area:
             if type(elemento) != list:
                 for valor in elemento.valores_possiveis:
@@ -182,22 +183,28 @@ class Elemento:
     def setCell(self, valor):
         x = self.cord[0]
         y = self.cord[1]
+        #Verifica se em nenhuma das casas adjacentes já possui o valor que se deseja inserir
         if y != 0:
+            #esquerda
             if matriz[x][y-1].valor != valor:
                 pass
             else:
                 return 
         if y < len(matriz)-1:
+            #direita
             if matriz[x][y+1].valor != valor: 
                 pass
             else:
                 return
         if x != 0:
+            #acima
+
             if matriz[x-1][y].valor != valor:
                 pass
             else:
                 return
         if x < len(matriz)-1:
+            #abaixo
             if matriz[x+1][y].valor != valor:
                 pass
             else:
@@ -207,7 +214,9 @@ class Elemento:
         self.tirar_possibilidades()
     
 def instancia_exemplo(entry):
+    #Cria uma matriz de tamanho len(entrada) x len(entrada), composta por 0, que serão substituídos futuramente pelos objetos referentes
     matriz = [[0 for i in range(len(entry))] for i in range(len(entry))]
+
     
     for i in range(len(entry)):
         for j in range(len(entry)):
@@ -241,6 +250,7 @@ exemplo2 = [[(4, (0, 0), 100, 4, False, []), (0, (0, 1), 100, 4, False, []), (4,
             [(2, (8, 0), 104, 5, False, []), (5, (8, 1), 104, 5, False, []), (0, (8, 2), 109, 4, False, []), (1, (8, 3), 110, 4, False, []), (2, (8, 4), 110, 4, False, []), (0, (8, 5), 110, 4, False, []), (2, (8, 6), 111, 4, False, []), (0, (8, 7), 121, 6, False, []), (3, (8, 8), 121, 6, False, []), (0, (8, 9), 122, 4, False, [])], 
             [(1, (9, 0), 104, 5, False, []), (0, (9, 1), 104, 5, False, []), (0, (9, 2), 109, 4, False, []), (2, (9, 3), 109, 4, False, []), (4, (9, 4), 111, 4, False, []), (0, (9, 5), 111, 4, False, []), (1, (9, 6), 111, 4, False, []), (2, (9, 7), 121, 6, False, []), (0, (9, 8), 121, 6, False, []), (5, (9, 9), 121, 6, False, [])]]
 
+
 #Exemplo1
 #qnt_areas = 11
 #Exemplo2
@@ -249,10 +259,6 @@ qnt_areas = 27
 areas = [[]for i in range(qnt_areas)]
 
 matriz = instancia_exemplo(exemplo2)
-print(areas)
-print(matriz)
-m = 0
-
 for area in areas:
     #adiciona lista na lista de areas que informa os números que estão presentes naquela área
     valores_possiveis = []
@@ -261,29 +267,38 @@ for area in areas:
         if elemento.valor != 0:
             valores_possiveis.append(elemento.valor) 
     area.append(valores_possiveis)
-    print(f"area {m}")
-    m += 1
-    print(area)
 
-print(matriz)
+
+
 #Varre a matriz escrevendo a lista de valores possíveis pra cada célula
 for i in range(len(matriz)):
-    print("area antes")
-    print(matriz[i])
     for j in range(len(matriz)):
         #Se alguma celula já tiver valor, a lista de valores possíveis é vazia
         if matriz[i][j].valor == 0:
-            #loop de 1 ao tamanho da matriz
+            #loop de 1 ao tamanho da matriz, caso k não esteja na area ainda é inserido à lista de 'valores_possiveis' daquela célula.
             for k in range(1, matriz[i][j].tam_area +1):
                 if k not in areas[matriz[i][j].id_area - 100][-1]:
                     matriz[i][j].valores_possiveis.append(k)
-    print("area depois")
-    print(matriz[i])
 
+
+print()
+print("Matriz inicial:")
+for i in range(len(matriz)):
+    print(f"{i+1}: ", end='')
+    for j in range(len(matriz)):
+        print(matriz[i][j].valor,',' if j < len(matriz)-1 else '', end='' if j < len(matriz)-1 else '\n')
+
+
+'''Varre a matriz executando a função tirar_possibilidades em todos os elementos que já foram previamente inseridos no arquivo de entrada, ou seja, sao diferentes de 
+0 por padrão'''
 for i in range(len(matriz)):
     for j in range(len(matriz)):
         if matriz[i][j].valor != 0:
             matriz[i][j].tirar_possibilidades()
-        
-for area in areas:
-    print(area)
+
+print()
+print("Matriz após executar tirar_possibilidades() nos números que vem por padrão na matriz:")
+for i in range(len(matriz)):
+    print(f"{i+1}: ", end='')
+    for j in range(len(matriz)):
+        print(matriz[i][j].valor,',' if j < len(matriz)-1 else '', end='' if j < len(matriz)-1 else '\n')
