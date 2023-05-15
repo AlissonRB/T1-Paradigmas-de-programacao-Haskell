@@ -18,3 +18,26 @@ matriz = [      [Elemento 4 (0, 0) 100 4 False [], Elemento 0 (0, 1) 100 4 False
               , [ Elemento 4 (7, 0) 104 5 False [], Elemento 2 (7, 1) 103 7 False [], Elemento 0 (7, 2) 109 4 False [1,3,4], Elemento 0 (7, 3) 110 4 False [3,4], Elemento 0 (7, 4) 112 6 False [1,2,4], Elemento 5 (7, 5) 112 6 False [], Elemento 0 (7, 6) 112 6 False [1,2,4], Elemento 0 (7, 7) 112 6 False [1,2,4], Elemento 4 (7, 8) 121 6 False [], Elemento 3 (7, 9) 122 4 False []]
               , [ Elemento 2 (8, 0) 104 5 False [], Elemento 5 (8, 1) 104 5 False [], Elemento 0 (8, 2) 109 4 False [1,3,4], Elemento 1 (8, 3) 110 4 False [], Elemento 2 (8, 4) 110 4 False [], Elemento 0 (8, 5) 110 4 False [3,4], Elemento 2 (8, 6) 111 4 False [], Elemento 0 (8, 7) 121 6 False [1,6], Elemento 3 (8, 8) 121 6 False [], Elemento 0 (8, 9) 122 4 False [1,4]]
               , [ Elemento 1 (9, 0) 104 5 False [], Elemento 0 (9, 1) 104 5 False [3], Elemento 0 (9, 2) 109 4 False [1,3,4], Elemento 2 (9, 3) 109 4 False [], Elemento 4 (9, 4) 111 4 False [], Elemento 0 (9, 5) 111 4 False [3], Elemento 1 (9, 6) 111 4 False [], Elemento 2 (9, 7) 121 6 False [], Elemento 0 (9, 8) 121 6 False [1,6], Elemento 5 (9, 9) 121 6 False []]]
+
+-- printa a matriz
+print_matriz :: [[Elemento]] -> IO ()
+print_matriz matriz = mapM_ printRow matriz
+    where
+        printRow row  = putStrLn $ unwords $ map showElemento row 
+        showElemento elem = show (valor elem)
+
+-- seta true em area_complete para o elemento que tiver o valor diferente de zero
+atualizar_area_complete :: [[Elemento]] -> [[Elemento]]
+atualizar_area_complete matriz = map (map atualizar_elemento) matriz
+    where
+      atualizar_elemento elem@(Elemento v c i t ac vp)
+        | v /= 0 = Elemento v c i t True vp
+        | otherwise = elem
+
+-- completa os Elementos que tiverem apenas 1 numero na lista de valores_possiveis
+complete_unico :: [[Elemento]] -> [[Elemento]]
+complete_unico matriz = map (map atualizar_elemento) matriz
+    where
+      atualizar_elemento elem@(Elemento v c i t ac vp)
+        | length vp == 1 = Elemento (head vp) c i t ac []
+        | otherwise = elem
