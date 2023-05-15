@@ -64,3 +64,107 @@ tirar_possibilidades matriz = map (map atualizar_elemento) matriz
         let vizinhos = get_vizinhos matriz elemento
             valores_possiveis_atualizados = foldr delete (valores_possiveis elemento) vizinhos
         in elemento { valores_possiveis = valores_possiveis_atualizados}
+
+-----------last_possible--------------------------------------------------
+
+
+last_possible :: [[Elemento]] -> [(Int, Int)] -> [[Elemento]]
+last_possible matriz list_areas_to_be_analyzed =
+  case get_index_value list_areas_to_be_analyzed of
+    Nothing -> matriz
+    Just (id_area, tam_area) ->
+      let
+        new_list_areas_to_be_analyzed = removerPrimeiraTupla list_areas_to_be_analyzed
+        matriz_atualizada = chamada_das_funcoes_last_possible matriz id_area tam_area
+      in
+        if null new_list_areas_to_be_analyzed
+          then matriz_atualizada
+          else last_possible matriz_atualizada new_list_areas_to_be_analyzed
+
+--retorna a lista de tuplas com (id_area, tam_area) , das areas nao completas
+areas_to_be_analyzed :: [[Elemento]] -> [(Int, Int)]
+areas_to_be_analyzed matriz = nub [(id_area elemento, tam_area elemento) | linha <- matriz, elemento <- linha, not (area_complete elemento)]
+
+chamada_das_funcoes_last_possible :: [[Elemento]] -> Int -> Int -> [[Elemento]]
+chamada_das_funcoes_last_possible matriz id_area tam_area =
+  let
+    valores_possiveis = take_valores_possiveis matriz id_area
+    lista_contador = criar_lista_contador valores_possiveis tam_area
+    indices_valores = contadorIndices lista_contador
+  in
+    uma_casa_possivel matriz indices_valores id_area
+
+--recebe a matriz, um id_area e
+-- retorna a lista com uniao com repeticao dos valores possiveis de uma area
+take_valores_possiveis :: [[Elemento]] -> Int -> [Int]
+take_valores_possiveis matriz id_area = concatMap valores_possiveis_area (concat matriz)
+  where
+    valores_possiveis_area (Elemento _ _ id _ _ valores_possiveis) | id == id_area = valores_possiveis
+    valores_possiveis_area _ = []
+
+--recebe a lista valoes_possiveis retornado por take_valores_possiveis e o tam_area,
+-- e cria a lista que sera usada como contador
+-- retorna a lista contador
+criar_lista_contador :: [Int] -> Int -> [Int] -- passo 2
+criar_lista_contador valores_possiveis1 tam_area = contador
+  where
+    contador = map (countOccurrences valores_possiveis1) [1..tam_area]
+    countOccurrences xs x = length $ filter (== x) xs
+
+-- recebe uma lista e retorna uma lista de tuplas
+--transforma a lista contador em uma lista de tuplas com (valor,indice) = (qtd desse numero, numero )
+-- [(contador,indice+1 = valor)]
+contadorIndices :: [Int] -> [(Int, Int)]
+contadorIndices lista = aux lista 0
+  where
+    aux [] _ = []
+    aux (x:xs) count = (count, count + 1) : aux xs (if x == 0 then count + 1 else count)
+
+--retornar a primeira tupla da lista
+get_index_value :: [(Int, Int)] -> Maybe (Int, Int)
+get_index_value [] = Nothing
+get_index_value ((x, y):_) = Just (x, y)
+
+-- retorna a cauda de uma lista
+removerPrimeiraTupla :: [(a, b)] -> [(a, b)]
+removerPrimeiraTupla [] = []
+removerPrimeiraTupla (_:xs) = xs
+
+-- indice, valor = qtd do numero, numero
+uma_casa_possivel :: [[Elemento]] -> [(Int, Int)] -> Int -> [[Elemento]]
+uma_casa_possivel matriz lista_indice_valor1 id_area =
+  case get_index_value lista_indice_valor1 of
+    Nothing -> matriz
+    Just (indice, valor) ->
+      let
+        lista_indice_valor1_atualizado = removerPrimeiraTupla lista_indice_valor1
+        matriz_atualizada = set_last_possivel matriz id_area indice valor
+      in
+        if null lista_indice_valor1_atualizado
+          then matriz_atualizada
+          else uma_casa_possivel matriz_atualizada lista_indice_valor1_atualizado id_area
+
+-- area_coluna = uma_casa_possivel
+-- preencher_coluna == set_last_possible
+ 
+set_last_possivel :: [[Elemento]] -> Int -> Int -> Int -> [[Elemento]]
+set_last_possivel matriz identif_area indice novo_valor
+  | indice == 1 = minha_funcao
+  | otherwise = matriz
+  where
+    minha_funcao = map (map atualizaElemento ) matriz
+
+    atualizaElemento :: Elemento -> Elemento
+    atualizaElemento elemento
+      | (id_area elemento) == identif_area && numeroNaLista novo_valor (valores_possiveis elemento) =
+          let
+            novos_valores_possiveis = filter (/= novo_valor) (valores_possiveis elemento)
+          in
+            elemento { valor = novo_valor, valores_possiveis = novos_valores_possiveis }
+      | otherwise = elemento
+        
+numeroNaLista :: Int -> [Int] -> Bool
+numeroNaLista _ [] = False
+numeroNaLista numero (x:xs)
+  | numero == x = True
+  | otherwise = numeroNaLista numero xs
