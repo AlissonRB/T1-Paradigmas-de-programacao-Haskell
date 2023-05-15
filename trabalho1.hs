@@ -66,8 +66,6 @@ tirar_possibilidades matriz = map (map atualizar_elemento) matriz
         in elemento { valores_possiveis = valores_possiveis_atualizados}
 
 -----------last_possible--------------------------------------------------
-
-
 last_possible :: [[Elemento]] -> [(Int, Int)] -> [[Elemento]]
 last_possible matriz list_areas_to_be_analyzed =
   case get_index_value list_areas_to_be_analyzed of
@@ -168,3 +166,30 @@ numeroNaLista _ [] = False
 numeroNaLista numero (x:xs)
   | numero == x = True
   | otherwise = numeroNaLista numero xs
+
+main :: IO ()
+main = do
+    print("Matriz de entrada: ")
+    print_matriz matriz
+    putStrLn ""
+
+    let matriz1 = tirar_possibilidades matriz
+
+    let matriz2 = complete_unico matriz1
+
+    let lista_teste = areas_to_be_analyzed matriz2
+    print (lista_teste)
+    putStrLn ""
+
+    -- putStrLn "Area Coluna:"
+    -- let lista_tuplas5 = [(108, 2, 3, 2), (108, 3,3, 1), (109,7,2,4), (109,8,2,3), (109,9,2,1)]
+    -- let matriz1_coluna = area_coluna matriz lista_tuplas5
+    -- print_matriz matriz1_coluna
+
+    putStrLn "matriz atualizada:"
+    let matriz3 = last_possible matriz2 lista_teste
+
+    let matriz4 = complete_unico matriz3
+    --print("Matriz atualizada: ")
+    print_matriz matriz4
+    putStrLn ""
