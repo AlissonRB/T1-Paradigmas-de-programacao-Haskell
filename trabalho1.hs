@@ -41,3 +41,26 @@ complete_unico matriz = map (map atualizar_elemento) matriz
       atualizar_elemento elem@(Elemento v c i t ac vp)
         | length vp == 1 = Elemento (head vp) c i t ac []
         | otherwise = elem
+
+--funcao auxiliar da tirar_possibilidades para pegar os valores vizinhos de um elemento
+get_vizinhos :: [[Elemento]] -> Elemento -> [Int]
+get_vizinhos matriz (Elemento _ (x, y) _ _ _ valores_possiveis) =
+  let left = fromMaybe 0 $ valor <$> get_elem (x, y - 1)  
+      right = fromMaybe 0 $ valor <$> get_elem (x, y + 1)
+      up = fromMaybe 0 $ valor <$> get_elem (x - 1, y)
+      down = fromMaybe 0 $ valor <$> get_elem (x + 1, y)
+  in [left, right, up, down]
+  where
+    get_elem (i, j)
+      | i < 0 || j < 0 || i >= length matriz || j >= length (matriz !! i) = Nothing
+      | otherwise = Just ( (matriz !! i !! j))
+
+-- analisa os valores vizinhos de cada Elemento, e compara com o valor do elemento quando diferente de zero
+--se for igual, retira da lista de valores_possiveis do vizinho o valor em questao
+tirar_possibilidades :: [[Elemento]] -> [[Elemento]]
+tirar_possibilidades matriz = map (map atualizar_elemento) matriz
+    where
+      atualizar_elemento elemento = 
+        let vizinhos = get_vizinhos matriz elemento
+            valores_possiveis_atualizados = foldr delete (valores_possiveis elemento) vizinhos
+        in elemento { valores_possiveis = valores_possiveis_atualizados}
