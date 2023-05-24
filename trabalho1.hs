@@ -177,6 +177,76 @@ numeroNaLista numero (x:xs)
   | numero == x = True
   | otherwise = numeroNaLista numero xs
 
+-----------------------------------------------------------------
+-- area_coluna
+--recebe a matriz e a lista de areas para analisar retornada por areas_to_be_analyzed 
+--essa funcao usa a verificar coluna2 e retorna uma lista de tuplas,com informações da 
+--coluna a ser preenchida(id_area,x,y,valor), se nao houver coluna retorna lista vazia
+verificar_coluna :: [[Elemento]] -> [(Int, Int)] -> [(Int, Int, Int, Int)]
+verificar_coluna matriz list_areas_to_be_analyzed =
+  case get_index_value list_areas_to_be_analyzed of
+    Nothing -> [] -- Retorna uma lista vazia quando não há mais áreas para serem analisadas
+    Just (id_area, tam_area) ->
+      let
+        new_list_areas_to_be_analyzed = removerPrimeiraTupla list_areas_to_be_analyzed
+        colunas = verificar_coluna2 matriz id_area
+        areas_com_colunas = case colunas of
+                              Nothing -> []
+                              Just colunasList -> colunasList
+      in
+        if null new_list_areas_to_be_analyzed
+          then areas_com_colunas
+          else areas_com_colunas ++ verificar_coluna matriz new_list_areas_to_be_analyzed
+
+
+-- --retorna uma lista de tuplas, com informações da coluna da area se houver
+verificar_coluna2 :: [[Elemento]] -> Int -> Maybe [(Int, Int, Int, Int)]
+verificar_coluna2 matriz identif_area = 
+  let
+    elementos = concat matriz
+    filtro = filter (\elem -> id_area elem == identif_area && valor elem == 0) elementos
+    coordenadas_x = map (\elem -> fst (cord elem)) filtro
+    coordenadas_y = map (\elem -> snd (cord elem)) filtro
+    valores_restantes_area = reverse . nub $ concatMap (\elem -> valores_possiveis elem) filtro
+    coluna_valida = all (== head coordenadas_y) coordenadas_y && sort coordenadas_x == [minimum coordenadas_x .. maximum coordenadas_x]
+    tuplas = zip4 (repeat identif_area) coordenadas_x coordenadas_y valores_restantes_area
+  in
+    if coluna_valida then Just tuplas else Nothing
+
+getFirstTuple :: [(a, b, c, d)] -> (a, b, c, d)
+getFirstTuple ((w, x, y, z):_) = (w, x, y, z)
+getFirstTuple [] = error "Lista vazia"
+
+resto_tuplas :: [(a, b, c, d)] -> [(a, b, c, d)]
+resto_tuplas [] = [] -- Se a lista estiver vazia, retorna uma lista vazia
+resto_tuplas (_:xs) = xs 
+
+area_coluna :: [[Elemento]] -> [(Int, Int, Int, Int)] -> [[Elemento]]
+area_coluna matriz [] = matriz
+area_coluna matriz lista_tuplas2 =
+  let
+    (identif_area, cord_x, cord_y, novo_valor) = getFirstTuple lista_tuplas2
+    resto_tuplas_resultado = resto_tuplas lista_tuplas2
+    matriz_atualizada = preencher_coluna matriz identif_area cord_x cord_y novo_valor
+  in
+    if length resto_tuplas_resultado == 0
+      then matriz_atualizada
+      else area_coluna matriz_atualizada resto_tuplas_resultado
+
+
+preencher_coluna :: [[Elemento]] -> Int -> Int -> Int -> Int -> [[Elemento]]
+preencher_coluna matriz identif_area cord_x cord_y novo_valor =
+  map (map atualizarElemento) matriz
+  where
+    atualizarElemento :: Elemento -> Elemento
+    atualizarElemento elemento
+      | it_found (id_area elemento) (fst (cord elemento)) (snd (cord elemento)) identif_area cord_x cord_y = elemento { valor = novo_valor, valores_possiveis = [] }
+      | otherwise = elemento
+
+--retorna se dois valors sao iguais
+it_found :: Int -> Int -> Int -> Int -> Int -> Int -> Bool
+it_found a b c d e f = if a == d && b == e && c == f then True else False
+
 main :: IO ()
 main = do
     print("Matriz de entrada: ")
