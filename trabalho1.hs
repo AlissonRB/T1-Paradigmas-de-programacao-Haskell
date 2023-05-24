@@ -1,3 +1,7 @@
+import Data.List
+import Data.Maybe (fromMaybe)
+import Data.List (nub)
+
 data Elemento = Elemento {
   valor :: Int, -- valor int da casa
   cord :: (Int, Int), -- tupla de valores referentes a linha e coluna do elemento na matriz --> (x, y)
@@ -26,13 +30,25 @@ print_matriz matriz = mapM_ printRow matriz
         printRow row  = putStrLn $ unwords $ map showElemento row 
         showElemento elem = show (valor elem)
 
--- seta true em area_complete para o elemento que tiver o valor diferente de zero
+-- seta true em area_complete para a area que tiver todos os valores diferente de zero
 atualizar_area_complete :: [[Elemento]] -> [[Elemento]]
-atualizar_area_complete matriz = map (map atualizar_elemento) matriz
-    where
-      atualizar_elemento elem@(Elemento v c i t ac vp)
-        | v /= 0 = Elemento v c i t True vp
-        | otherwise = elem
+atualizar_area_complete matriz = map (map verificarAreaCompleta) matriz
+  where
+    verificarAreaCompleta elemento =
+      if valor elemento /= 0 && all (verificarElementoCompleto (valor elemento)) elementosArea
+        then elemento { area_complete = True }
+        else elemento
+      where
+        idArea = id_area elemento
+        elementosArea = obterElementosArea matriz idArea
+
+verificarElementoCompleto :: Int -> Elemento -> Bool
+verificarElementoCompleto valorReferencia elemento =
+  valorReferencia /= 0 && valor elemento /= 0
+
+obterElementosArea :: [[Elemento]] -> Int -> [Elemento]
+obterElementosArea matriz idArea =
+  concat $ map (filter (\elemento -> id_area elemento == idArea)) matriz
 
 -- completa os Elementos que tiverem apenas 1 numero na lista de valores_possiveis
 complete_unico :: [[Elemento]] -> [[Elemento]]
@@ -113,10 +129,7 @@ criar_lista_contador valores_possiveis1 tam_area = contador
 --transforma a lista contador em uma lista de tuplas com (valor,indice) = (qtd desse numero, numero )
 -- [(contador,indice+1 = valor)]
 contadorIndices :: [Int] -> [(Int, Int)]
-contadorIndices lista = aux lista 0
-  where
-    aux [] _ = []
-    aux (x:xs) count = (count, count + 1) : aux xs (if x == 0 then count + 1 else count)
+contadorIndices lista = zip lista [1..]
 
 --retornar a primeira tupla da lista
 get_index_value :: [(Int, Int)] -> Maybe (Int, Int)
@@ -141,9 +154,6 @@ uma_casa_possivel matriz lista_indice_valor1 id_area =
         if null lista_indice_valor1_atualizado
           then matriz_atualizada
           else uma_casa_possivel matriz_atualizada lista_indice_valor1_atualizado id_area
-
--- area_coluna = uma_casa_possivel
--- preencher_coluna == set_last_possible
  
 set_last_possivel :: [[Elemento]] -> Int -> Int -> Int -> [[Elemento]]
 set_last_possivel matriz identif_area indice novo_valor
@@ -156,7 +166,7 @@ set_last_possivel matriz identif_area indice novo_valor
     atualizaElemento elemento
       | (id_area elemento) == identif_area && numeroNaLista novo_valor (valores_possiveis elemento) =
           let
-            novos_valores_possiveis = filter (/= novo_valor) (valores_possiveis elemento)
+            novos_valores_possiveis = []
           in
             elemento { valor = novo_valor, valores_possiveis = novos_valores_possiveis }
       | otherwise = elemento
