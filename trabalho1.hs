@@ -247,29 +247,86 @@ preencher_coluna matriz identif_area cord_x cord_y novo_valor =
 it_found :: Int -> Int -> Int -> Int -> Int -> Int -> Bool
 it_found a b c d e f = if a == d && b == e && c == f then True else False
 
+------------verificar_acima e verificar_abaixo----------------------
+verificar_acima :: [[Elemento]] -> [[Elemento]]
+verificar_acima matriz = map (map atualizar_elemento) matriz
+  where
+    atualizar_elemento elemento@(Elemento valor (x, y) id_area _ _ valores_possiveis)
+      | valor == 0 && x /= 0 && valor1 /= 0 = elemento { valores_possiveis = filter (<= valor1) valores_possiveis }
+      | otherwise = elemento
+      where
+        valor1 = case getElem (x - 1) y matriz of
+          Just (Elemento valor _ id_area2 _ _ _) | id_area == id_area2 -> valor
+          _ -> 0
+    atualizar_elemento elemento = elemento
+
+getElem :: Int -> Int -> [[a]] -> Maybe a
+getElem x y xs
+  | x >= 0 && y >= 0 && x < length xs && y < length (xs !! x) = Just (xs !! x !! y)
+  | otherwise = Nothing
+
+verificar_acima2 :: [[Elemento]] -> [[Elemento]]
+verificar_acima2 matriz =  matriz
+
+verificar_abaixo :: [[Elemento]] -> [[Elemento]]
+verificar_abaixo matriz = map (map atualizar_elemento) matriz
+  where
+    atualizar_elemento elemento@(Elemento valor (x, y) id_area _ _ valores_possiveis)
+      | valor == 0 && x < 9 && elemento_abaixo = elemento { valores_possiveis = filter (>= valor1) valores_possiveis }
+      | otherwise = elemento
+      where
+        valor1 = case getElem (x + 1) y matriz of
+          Just (Elemento valor _ id_area2 _ _ _) | id_area == id_area2 && valor /= 0 -> valor
+          _ -> 0
+        elemento_abaixo  = case getElem (x + 1) y matriz of
+          Just (Elemento valor _ id_area2 _ _ _) | id_area == id_area2 -> True
+          _ -> False
+    atualizar_elemento elemento = elemento
+
+------loop-----------------------------
+loop :: [[Elemento]] -> Int -> IO()
+loop matrix n_loop = do
+  let matriz2 = tirar_possibilidades matrix
+      --last_possible
+      areas_analisar2 = areas_to_be_analyzed matriz2
+      matriz3 = last_possible matriz2 areas_analisar2
+      matriz4 = atualizar_area_complete matriz3
+
+      --area coluna
+      areas_analisar1 = areas_to_be_analyzed matriz4
+      teste1 = verificar_coluna matriz4 areas_analisar1
+      matriz5 = area_coluna matriz4 teste1
+      matriz6 = atualizar_area_complete matriz5
+
+      --verificar acima1
+      matriz7 = verificar_acima matriz6
+
+      --verificar_acima2
+      matriz8 = verificar_acima2 matriz7
+
+      --verificar_abaixo
+      matriz9 = verificar_abaixo matriz8
+
+      --condicoes de parada
+      condicao = condicaoParada matriz9
+      n_iteracoes = incrementador n_loop
+  print_matriz matriz9
+  print n_iteracoes
+  if condicao || n_iteracoes == 10
+    then print_matriz matriz9
+    else loop matriz9 n_iteracoes
+
+incrementador :: Int -> Int
+incrementador n = n + 1
+
+--se existir ao menos um elemento com valor igual a zero retorna false
+condicaoParada :: [[Elemento]] -> Bool
+condicaoParada matriz = all (all (\e -> valor e /= 0)) matriz
+
 main :: IO ()
 main = do
     print("Matriz de entrada: ")
     print_matriz matriz
     putStrLn ""
 
-    let matriz1 = tirar_possibilidades matriz
-
-    let matriz2 = complete_unico matriz1
-
-    let lista_teste = areas_to_be_analyzed matriz2
-    print (lista_teste)
-    putStrLn ""
-
-    -- putStrLn "Area Coluna:"
-    -- let lista_tuplas5 = [(108, 2, 3, 2), (108, 3,3, 1), (109,7,2,4), (109,8,2,3), (109,9,2,1)]
-    -- let matriz1_coluna = area_coluna matriz lista_tuplas5
-    -- print_matriz matriz1_coluna
-
-    putStrLn "matriz atualizada:"
-    let matriz3 = last_possible matriz2 lista_teste
-
-    let matriz4 = complete_unico matriz3
-    --print("Matriz atualizada: ")
-    print_matriz matriz4
-    putStrLn ""
+    loop matriz 0
