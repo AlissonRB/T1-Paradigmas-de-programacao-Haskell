@@ -1,6 +1,5 @@
 import Data.List
 import Data.Maybe (fromMaybe)
-import Data.List (nub)
 
 data Elemento = Elemento {
   valor :: Int, -- valor int da casa
@@ -266,13 +265,27 @@ getElem x y xs
   | otherwise = Nothing
 
 verificar_acima2 :: [[Elemento]] -> [[Elemento]]
-verificar_acima2 matriz =  matriz
+verificar_acima2 matriz = map (map atualizar_elemento) matriz
+  where
+    atualizar_elemento elemento@(Elemento valor (x, y) id_area _ area_completa valores_possiveis)
+      | valor == 0 && x /= 0 && valor1 == 0 && area_completa == False && id_area == id_area2 = elemento { valor = novo_valor }
+      | otherwise = elemento
+      where
+        valor1 = case getElem (x - 1) y matriz of
+          Just (Elemento valor _ _ _ _ _)  -> valor
+        id_area2 = case getElem (x - 1) y matriz of
+          Just (Elemento _ _ id_area _ _ _)  -> id_area
+        novo_valor
+          | length auxiliar_lista == 1 = head auxiliar_lista
+          | otherwise = valor
+        auxiliar_lista = delete (maximum valores_possiveis) valores_possiveis
+    atualizar_elemento elemento = elemento
 
 verificar_abaixo :: [[Elemento]] -> [[Elemento]]
 verificar_abaixo matriz = map (map atualizar_elemento) matriz
   where
     atualizar_elemento elemento@(Elemento valor (x, y) id_area _ _ valores_possiveis)
-      | valor == 0 && x < 9 && elemento_abaixo = elemento { valores_possiveis = filter (>= valor1) valores_possiveis }
+      | valor == 0 && x < (length matriz - 1) && elemento_abaixo = elemento { valores_possiveis = filter (>= valor1) valores_possiveis }
       | otherwise = elemento
       where
         valor1 = case getElem (x + 1) y matriz of
@@ -283,10 +296,12 @@ verificar_abaixo matriz = map (map atualizar_elemento) matriz
           _ -> False
     atualizar_elemento elemento = elemento
 
+
 ------loop-----------------------------
-loop :: [[Elemento]] -> Int -> IO()
+loop :: [[Elemento]] -> Int -> IO (Int, [[Elemento]])
 loop matrix n_loop = do
   let matriz2 = tirar_possibilidades matrix
+    
       --last_possible
       areas_analisar2 = areas_to_be_analyzed matriz2
       matriz3 = last_possible matriz2 areas_analisar2
@@ -310,11 +325,13 @@ loop matrix n_loop = do
       --condicoes de parada
       condicao = condicaoParada matriz9
       n_iteracoes = incrementador n_loop
-  print_matriz matriz9
-  print n_iteracoes
-  if condicao || n_iteracoes == 10
-    then print_matriz matriz9
-    else loop matriz9 n_iteracoes
+  --putStrLn ("iteração nº: " ++ show n_iteracoes)
+  
+  --print_matriz matriz9
+  
+  case (condicao || n_iteracoes == 10) of
+    True -> return (n_iteracoes, matriz9)
+    False -> loop matriz9 n_iteracoes
 
 incrementador :: Int -> Int
 incrementador n = n + 1
@@ -329,4 +346,7 @@ main = do
     print_matriz matriz
     putStrLn ""
 
-    loop matriz 0
+    (n_iteracoes, matriz_resolvida) <- loop matriz 0
+    print("Matriz resolvida: ")
+    print_matriz matriz_resolvida
+    putStrLn ("Nº de iterações: " ++ show n_iteracoes)
