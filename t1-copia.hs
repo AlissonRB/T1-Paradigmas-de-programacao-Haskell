@@ -1,4 +1,5 @@
 import Data.List
+import Data.List (nub)
 import Data.Maybe (fromMaybe)
 
 data Elemento = Elemento {
@@ -50,7 +51,7 @@ print_matriz :: [[Elemento]] -> IO ()
 print_matriz matriz = mapM_ printRow matriz
     where
         printRow row  = putStrLn $ unwords $ map showElemento row 
-        showElemento elem = show (valor elem)
+        showElemento elem = show (valores_possiveis elem)
 
 -- cria a lista de valores possiveis
 create_list_of_possible_values :: [[Elemento]] -> [[Elemento]]
@@ -82,6 +83,17 @@ atualizar_area_complete matriz = map (map verificarAreaCompleta) matriz
         idArea = id_area elemento
         elementosArea = obterElementosArea matriz idArea
 
+atualizar_valores_possiveis:: [[Elemento]] -> [[Elemento]]
+atualizar_valores_possiveis matriz = map (map verificarAreaCompleta) matriz
+  where
+    verificarAreaCompleta elemento =
+      if valor elemento /= 0 && all (verificarElementoCompleto (valor elemento)) elementosArea
+        then elemento { valores_possiveis = [] }
+        else elemento
+      where
+        idArea = id_area elemento
+        elementosArea = obterElementosArea matriz idArea
+
 verificarElementoCompleto :: Int -> Elemento -> Bool
 verificarElementoCompleto valorReferencia elemento =
   valorReferencia /= 0 && valor elemento /= 0
@@ -91,12 +103,26 @@ obterElementosArea matriz idArea =
   concat $ map (filter (\elemento -> id_area elemento == idArea)) matriz
 
 -- completa os Elementos que tiverem apenas 1 numero na lista de valores_possiveis
+
+
 complete_unico :: [[Elemento]] -> [[Elemento]]
 complete_unico matriz = map (map atualizar_elemento) matriz
-    where
-      atualizar_elemento elem@(Elemento v c i t ac vp)
-        | length vp == 1 = Elemento (head vp) c i t ac []
-        | otherwise = elem
+  where
+    atualizar_elemento elemento@(Elemento v cord id_area tam_area area_complete valores_possiveis) =
+      let vizinhos = get_vizinhos matriz elemento
+          unicoValor = head $ filter (\valor -> valor `notElem` vizinhos) valores_possiveis
+      in if v == 0 && length valores_possiveis == 1 && unicoValor `notElem` vizinhos
+         then Elemento unicoValor cord id_area tam_area True valores_possiveis
+         else elemento
+
+-- uma funcao que receba um elemento e um int A e retorne um boleano
+-- a funcao deve utilizar a funcao get_vizinhos , e se A, for igual a alguns dos inteiros retornados nos vizinhos, entao essa funcao retorna false, senao 
+-- retorna true
+
+verificarA :: [[Elemento]] -> Elemento -> Int -> Bool
+verificarA matriz elemento v =
+  let vizinhos = get_vizinhos matriz elemento
+  in v `notElem` vizinhos
 
 --funcao auxiliar da tirar_possibilidades para pegar os valores vizinhos de um elemento
 get_vizinhos :: [[Elemento]] -> Elemento -> [Int]
@@ -204,7 +230,7 @@ set_last_possivel matriz identif_area indice novo_valor
 
     atualizaElemento :: Elemento -> Elemento
     atualizaElemento elemento
-      | (id_area elemento) == identif_area && numeroNaLista novo_valor (valores_possiveis elemento) =
+      | (id_area elemento) == identif_area && numeroNaLista novo_valor (valores_possiveis elemento) && verificarA matriz elemento novo_valor =
           let
             novos_valores_possiveis = []
           in
@@ -280,7 +306,7 @@ preencher_coluna matriz identif_area cord_x cord_y novo_valor =
   where
     atualizarElemento :: Elemento -> Elemento
     atualizarElemento elemento
-      | it_found (id_area elemento) (fst (cord elemento)) (snd (cord elemento)) identif_area cord_x cord_y = elemento { valor = novo_valor, valores_possiveis = [] }
+      | it_found (id_area elemento) (fst (cord elemento)) (snd (cord elemento)) identif_area cord_x cord_y && verificarA matriz elemento novo_valor = elemento { valor = novo_valor, valores_possiveis = [] }
       | otherwise = elemento
 
 --retorna se dois valors sao iguais
@@ -288,6 +314,7 @@ it_found :: Int -> Int -> Int -> Int -> Int -> Int -> Bool
 it_found a b c d e f = if a == d && b == e && c == f then True else False
 
 ------------verificar_acima e verificar_abaixo----------------------
+--so coloca na lista auxiliar valores que sao menores que os da casa de cima
 verificar_acima :: [[Elemento]] -> [[Elemento]]
 verificar_acima matriz = map (map atualizar_elemento) matriz
   where
@@ -309,7 +336,7 @@ verificar_acima2 :: [[Elemento]] -> [[Elemento]]
 verificar_acima2 matriz = map (map atualizar_elemento) matriz
   where
     atualizar_elemento elemento@(Elemento valor (x, y) id_area _ area_completa valores_possiveis)
-      | valor == 0 && x /= 0 && valor1 == 0 && area_completa == False && id_area == id_area2 = elemento { valor = novo_valor }
+      | valor == 0 && x /= 0 && valor1 == 0 && area_completa == False && id_area == id_area2 && verificarA matriz elemento novo_valor = elemento { valor = novo_valor , valores_possiveis = novos_valores_possiveis}
       | otherwise = elemento
       where
         valor1 = case getElem (x - 1) y matriz of
@@ -319,32 +346,43 @@ verificar_acima2 matriz = map (map atualizar_elemento) matriz
         novo_valor
           | length auxiliar_lista == 1 = head auxiliar_lista
           | otherwise = valor
+
+        novos_valores_possiveis
+          | length auxiliar_lista == 1 = []
+          | otherwise = valores_possiveis
         auxiliar_lista = delete (maximum valores_possiveis) valores_possiveis
     atualizar_elemento elemento = elemento
 
-verificar_abaixo :: [[Elemento]] -> [[Elemento]]
-verificar_abaixo matriz = map (map atualizar_elemento) matriz
+verificar_abaixo1 :: [[Elemento]] -> [[Elemento]]
+verificar_abaixo1 matriz = map (map atualizar_elemento) matriz
   where
-    atualizar_elemento elemento@(Elemento valor (x, y) id_area _ _ valores_possiveis)
-      | valor == 0 && x < (length matriz - 1) && elemento_abaixo = elemento { valores_possiveis = filter (>= valor1) valores_possiveis }
+    atualizar_elemento elemento@(Elemento valorA (x, y) id_area tamanho_area area_completa  valores_possiveis)
+      --elemento abaixo é 1 a menos que o tamanho da area
+      | valorA == 0 && x < (length matriz - 1) && area_completa == False &&  elemento_abaixo2 = elemento { valor = maximum valores_possiveis, valores_possiveis = [] }
+      --O valor abaixo é 1 a menos que o maior possivel pra aquela célula
+      | valorA == 0 && x < (length matriz - 1) && area_completa == False && elemento_abaixo1 = elemento { valor = maximum valores_possiveis, valores_possiveis = [] }
       | otherwise = elemento
       where
-        valor1 = case getElem (x + 1) y matriz of
-          Just (Elemento valor _ id_area2 _ _ _) | id_area == id_area2 && valor /= 0 -> valor
-          _ -> 0
-        elemento_abaixo  = case getElem (x + 1) y matriz of
-          Just (Elemento valor _ id_area2 _ _ _) | id_area == id_area2 -> True
+        elemento_abaixo1  = case getElem (x + 1) y matriz of
+          Just (Elemento valor1 _ id_area2 _ _ _) | id_area == id_area2 && valor1 == maximum valores_possiveis - 1 -> True
+          _ -> False
+        elemento_abaixo2  = case getElem (x + 1) y matriz of
+          Just (Elemento valor2 _ id_area2 _ _ _) | id_area == id_area2 && valor2 == tamanho_area - 1 -> True
           _ -> False
     atualizar_elemento elemento = elemento
+
+verificar_abaixo2 :: [[Elemento]] -> [[Elemento]]
+verificar_abaixo2 matriz =  matriz
 
 ------loop-----------------------------
 loop :: [[Elemento]] -> Int -> IO (Int, [[Elemento]])
 loop matrix n_loop = do
   let matriz2 = tirar_possibilidades matrix
     
+      matriz34 = complete_unico matriz2
       --last_possible
-      areas_analisar2 = areas_to_be_analyzed matriz2
-      matriz3 = last_possible matriz2 areas_analisar2
+      areas_analisar2 = areas_to_be_analyzed matriz34
+      matriz3 = last_possible matriz34 areas_analisar2
       matriz4 = atualizar_area_complete matriz3
 
       --area coluna
@@ -360,18 +398,22 @@ loop matrix n_loop = do
       matriz8 = verificar_acima2 matriz7
 
       --verificar_abaixo
-      matriz9 = verificar_abaixo matriz8
+      matriz9 = verificar_abaixo1 matriz8
 
+      matriz10 = verificar_abaixo2 matriz9
+
+      matriz12 = atualizar_valores_possiveis matriz10
+      
       --condicoes de parada
-      condicao = condicaoParada matriz9
+      condicao = condicaoParada matriz12
       n_iteracoes = incrementador n_loop
   --putStrLn ("iteração nº: " ++ show n_iteracoes)
   
   --print_matriz matriz9
   
   case (condicao || n_iteracoes == 10) of
-    True -> return (n_iteracoes, matriz9)
-    False -> loop matriz9 n_iteracoes
+    True -> return (n_iteracoes, matriz12)
+    False -> loop matriz12 n_iteracoes
 
 incrementador :: Int -> Int
 incrementador n = n + 1
