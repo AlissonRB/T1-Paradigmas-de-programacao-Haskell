@@ -1,0 +1,452 @@
+(defun getvalor(matriz i j)
+    (aref matriz i j 0)
+)
+
+
+(defun getX(matriz i j)
+    (car (aref matriz i j 1))
+)
+
+(defun getY(matriz i j)
+    (cadr (aref matriz i j 1))
+)
+
+(defun getIDArea(matriz i j)
+    (aref matriz i j 2)
+)
+
+(defun getTamArea(matriz i j)
+    (aref matriz i j 3)
+)
+
+(defun getValoresPossiveis(matriz i j) ;retorna lista de valores possiveis
+    (aref matriz i j 4)
+)
+
+(defun setValoresPossiveis(matriz i j lista)
+    (setf (aref matriz i j 4) lista)
+)
+
+(defun getdimensions(matriz)
+    (cdr (array-dimensions matriz))
+)
+
+
+(setq matriz1 
+    (make-array '(6 6 5)
+        :initial-contents
+        '(
+            (
+                (2 (0 0) 100 2 (0))
+                (0 (0 1) 100 2 (0))
+                (0 (0 2) 101 3 (0))
+                (0 (0 3) 101 3 (0))
+                (1 (0 4) 101 3 (0))
+                (0 (0 5) 102 2 (0))                
+            )
+            (
+                (0 (1 0) 103 6 (0))
+                (0 (1 1) 103 6 (0))
+                (0 (1 2) 103 6 (0))
+                (3 (1 3) 103 6 (0))
+                (0 (1 4) 103 6 (0))
+                (0 (1 5) 102 2 (0))                
+            )
+            (
+                (0 (2 0) 104 4 (0))
+                (3 (2 1) 105 4 (0))
+                (0 (2 2) 105 4 (0))
+                (0 (2 3) 105 4 (0))
+                (5 (2 4) 103 6 (0))
+                (3 (2 5) 106 3 (0))                
+            )
+            (
+                (0 (3 0) 104 4 (0))
+                (0 (3 1) 104 4 (0))
+                (0 (3 2) 104 4 (0))
+                (0 (3 3) 105 4 (0))
+                (0 (3 4) 106 3 (0))
+                (0 (3 5) 106 3 (0))                
+            )
+            (
+                (0 (4 0) 107 2 (0))
+                (0 (4 1) 107 2 (0))
+                (0 (4 2) 109 3 (0))
+                (0 (4 3) 110 5 (0))
+                (4 (4 4) 110 5 (0))
+                (2 (4 5) 110 5 (0))                
+            )
+            (
+                (0 (5 0) 108 2 (0))
+                (0 (5 1) 108 2 (0))
+                (0 (5 2) 109 3 (0))
+                (0 (5 3) 109 3 (0))
+                (0 (5 4) 110 5 (0))
+                (0 (5 5) 110 5 (0))                
+            )
+        )
+    )
+)
+
+(setq areas 
+        '((2 100)
+        (3 101)
+        (2 102)
+        (6 103)
+        (4 104)
+        (4 105)
+        (3 106)
+        (2 107)
+        (2 108)
+        (3 109)
+        (5 110))
+    )
+
+(setq aux_areas 
+        '((100)
+        (101)
+        (102)
+        (103)
+        (104)
+        (105)
+        (106)
+        (107)
+        (108)
+        (109)
+        (110)))
+
+(setq valores_possiveis
+    '(()
+    ()
+    ()
+    ()
+    ()
+    ()
+    ()
+    ()
+    ()
+    ()
+    ()
+    )
+)
+
+
+(defun tirar_possibilidades(matriz i j)
+    ;Codigo para direita e esquerda só troca o (- j 1) e (+ j 1) e a verificação pra não ocorrer index_error
+    ;esquerda
+    (print "doing")
+    (if (/= j 0) 
+        (if (= (getValor matriz i (- j 1)) 0) ; se o valor a esquerda for um 0
+            (if (member (getvalor matriz i j) (getvalorespossiveis matriz i (- j 1)) )
+                (setvalorespossiveis matriz i (- j 1)
+                    (remove (getvalor matriz i j) (getvalorespossiveis matriz i (- j 1)) );lista
+                )
+            )
+        )
+    )
+    ;direita
+    (if (< j (- (cadr (array-dimensions matriz)) 1))
+        (if (= (getValor matriz i (+ j 1)) 0) ; se o valor a direita for um 0
+            (if (member (getvalor matriz i j) (getvalorespossiveis matriz i (+ j 1)) )
+                (setvalorespossiveis matriz i (+ j 1)
+                    (remove (getvalor matriz i j) (getvalorespossiveis matriz i (+ j 1)) );lista
+                )
+            )
+        )
+    )
+    ;acima
+    (if (/= i 0)
+        (if (= (getvalor matriz (- i 1) j) 0)
+            (if (member (getvalor matriz i j) (getvalorespossiveis matriz (- i 1) j))
+                (setvalorespossiveis matriz (- i 1) j
+                    (remove (getvalor matriz i j) (getvalorespossiveis matriz (- i 1) j))
+                )
+            )
+        )
+    )
+    ;abaixo
+    (if (< i (- (car (array-dimensions matriz)) 1) )
+        (if (= (getvalor matriz (+ i 1) j) 0)
+            (if (member (getvalor matriz i j) (getvalorespossiveis matriz (+ i 1) j))
+                (setvalorespossiveis matriz (+ i 1) j
+                    (remove (getvalor matriz i j) (getvalorespossiveis matriz (+ i 1) j))
+                )
+            )
+        )
+    )
+    * (destructuring-bind (n m o) (array-dimensions matriz)
+        (loop for x from 0 below n do
+            (loop for y from 0 below m do
+                (if (= (getIdArea matriz x y) (getIdArea matriz i j))
+                    (if (member (getvalor matriz i j) (getvalorespossiveis matriz x y))
+                        (setvalorespossiveis matriz x y (remove (getvalor matriz i j) (getvalorespossiveis matriz x y)))
+                    )
+                )
+            )
+        )
+    )
+    (print "done")
+)
+
+(defun setCell(matriz i j valor)
+    (setf (aref matriz i j 0) valor)
+    (setf (aref matriz i j 4) (list 0))
+    (tirar_possibilidades matriz i j)
+)
+
+
+(defun complete_unico(matriz i j) ; Função que ve se a quantidade de valores_possiveis pra serem inseridos naquela célula é 1, se for, o insere nela.
+    (if (= (length (getValoresPossiveis matriz i j)) 1)
+        (progn
+            (setcell matriz i j (car (getValoresPossiveis matriz i j)))
+            T
+        )
+        NIL
+    )
+)
+
+(defun area_coluna (matriz i j)
+    ;(print "doing area_coluna")
+    * (destructuring-bind (n m o) (array-dimensions matriz)
+    (loop for x from 0 below n do ;analisando linha x
+        (setq listax '())
+        (setq listay '())
+        (loop for y from j below m do
+            (if (= (getIdArea matriz i j) (getIdArea matriz x y))
+                (progn
+                    (push (getX matriz x y) listax)
+                    (push (getY matriz x y) listay)
+                )
+            )
+        )
+        (if (= (length (getValoresPossiveis matriz i j)) (length listax))
+            (progn
+                (setq listax (sort listax #'<))
+                (setq listay (sort listay #'<))
+            )
+        )
+        (loop for z from 0 to (- (length listax) 2) do
+            (if (and 
+                    (= (nth z listax) (- (nth (+ z 1) listax) 1) );cond1
+                    (= (nth z listay) (nth (+ z 1) listay))) ;cond2
+                (progn
+                    ;(print "done area_coluna")
+                    T
+                )
+            )
+        )
+    )
+    )
+)
+
+(defun verificar_acima (matriz i j)
+    (print "doing verificar acima")
+    (setq resolve nil)
+    (if (/= (getx matriz i j) 0)
+        (if (= (getIdArea matriz i j) (getIdArea matriz (- i 1) j))
+            (if (/= (getvalor matriz (- i 1) j) 0) ;acima.valor != 0
+                (progn
+                    (print "valores_possiveis antes")
+                    (print (getValoresPossiveis matriz i j))
+                    (setq p (remove-if (lambda (valor) (> valor (getvalor matriz (- i 1) j)) ) (getvalorespossiveis matriz i j)))
+                    (print "valor acima")
+                    (print (getvalor matriz (- i 1) j))
+                    (setValoresPossiveis matriz i j p)
+                    (print "valores_possiveis depois")
+                    (print (getvalorespossiveis matriz i j))
+                    (setq resolve T)
+                )
+                (if (= (length (getvalorespossiveis matriz i j)) 2) ;acima.valor = 0
+                    (progn
+                        (print "reach here?")
+                        (setcell matriz i j (car (getvalorespossiveis matriz i j)))
+                        (setcell matriz (- i 1) j (car (getvalorespossiveis matriz (- i 1) j)))
+                        (setq resolve T)
+                    )
+                )
+            )
+        )
+    )
+    (print "done verificar acima")
+    resolve
+)
+
+(defun verificar_abaixo(matriz i j)
+    (print "doing verificar abaixo")
+    (setq resolve nil)
+    (if (/= (getx matriz i j) (- (car (array-dimensions matriz)) 1) ) ;evita index_error
+        (if (= (getIdArea matriz i j) (getIdArea matriz (+ i 1) j)) ;verifica se estao na mesma area
+            (progn
+                (if (= (getvalor matriz (+ i 1) j) (- (car (last (getvalorespossiveis matriz i j))) 1)) ;valor abaixo é um a menos que o maior possivel na celula
+                    (progn
+                        (setcell matriz i j (last (getvalorespossiveis matriz i j) ) )
+                        (setq resolve T)
+                    )
+                )
+                (if (= (getvalor matriz (+ i 1) j) (- (getTamArea matriz i j) 1));valor abaixo é um a menos que o tamanho da area
+                    (progn
+                        (setcell matriz i j (getTamarea matriz i j))
+                        (setq resolve T)
+                    )
+                )
+                (if (= (getvalor matriz (+ i 1) j) 0) ;abaixo.valor = 0 e o tam_area esta em valores_possiveis do abaixo
+                    (if (member (getTamArea matriz i j) (getvalorespossiveis matriz (+ i 1) j))
+                        (setValoresPossiveis matriz (+ i 1) j (remove (getTamArea matriz i j) (getvalorespossiveis matriz (+ i 1) j)) )
+                    )
+                )
+                (if (= (length (getvalorespossiveis matriz i j) ) 2)
+                    (progn
+                        (setcell matriz (+ i 1) j (car (getvalorespossiveis matriz (+ i 1) j) ) )
+                        (setcell matriz i j (car (getvalorespossiveis matriz i j)))
+                        (setq resolve T)
+                    )
+                )
+            )
+        )
+    )
+    (print "done verificar abaixo")
+    resolve
+)
+
+;Tenta resolver qualquer de qualquer jeito a matriz até achar um, ou retorna NIL. Se achar uma forma em algum dos métodos, retorna T.
+(defun trySolve(matriz i j)
+    ;(print "doing trysolve")
+    (if (= 0 (getvalor matriz i j))
+        (if (complete_unico matriz i j);if cond true
+            T
+            (if (area_coluna matriz i j) 
+                T
+                (if (verificar_acima matriz i j) 
+                    T
+                    (if (verificar_abaixo matriz i j) 
+                        T
+                        
+                    )
+                )
+            )
+        )
+        NIL;else
+    )
+    ;(print "done trysolve")
+)
+
+
+(defun create_area_completa(tam_area)
+    (setq area_completa '())
+    (loop for i from 1 to tam_area do
+        (push i area_completa)
+    )
+    (nreverse area_completa)
+)
+
+
+;instancia areas
+(defun create_areas(x y aux v)
+    * (destructuring-bind (n m o) (array-dimensions matriz1)
+    (loop for i from 0 below n do
+        (loop for j from 0 below m do
+            (loop for k from 0 below o do
+                (if (= k 2)
+                    (progn
+                        (setq my_number (aref matriz1 i j 0));numero da celula da matriz
+                        (setq my_area (aref matriz1 i j k)); código da área
+                        (loop for q from 0 to (- (length y) 1) do ; passa por todas as areas na variável areas
+                            (progn
+                                (if (and (= my_area (car(nth q aux))) (/= my_number 0))
+                                    (push my_number (nth q y)) ;insere o valor já presente na matriz no inicio da lista
+                                )
+                            )
+                        )
+                    )
+                    ();else
+                )
+            )
+        )
+    )
+    (print "areas")
+    ;when de loop end
+    (loop for q  from 0 to (- (length y) 1) do ; passa por todas as áreas na variável areas(y)
+        (progn
+            (nreverse (nth q y)) ;inverte a lista pois todos os valores foram inseridos no início
+            (print (nth q y))
+        )
+        
+    )
+    (print "valores_possiveis")
+    (loop for i from 0 to (- (length y) 1) do ;passa por todas as áreas na varias areas(y)
+        (setq todos_valores (create_area_completa(cadr(nth i y))))
+        (loop for j from 2 to (length (nth i y)) do ;passa por todos os valores que já estão na area
+            (if (member (nth j (nth i y)) todos_valores) ;verica se o valor analizado(que já está na lista) está em todos_possiveis, o que sempre vai ser T
+                                                        ;então retira o elemento da lista, pois a inteção é retirar os que já estão e retornar os que faltam
+                (setq todos_valores (remove (nth j (nth i y)) todos_valores))
+            )
+        )
+        (setf (nth i v) todos_valores)
+        (print (nth i v))
+    )
+    )
+)
+
+(defun set_valores_possiveis(matriz valores)
+    * (destructuring-bind (n m o) (array-dimensions matriz)
+    (loop for i from 0 below n do
+        (loop for j from 0 below m do
+            (if (= (getvalor matriz i j) 0)
+                (setf (aref matriz i j 4) (nth (- (getIdArea matriz i j) 100) valores))
+            )
+        )
+    )
+    )
+)
+;------------------------------------------------------------- inicia aqui--------------------------------------------------------------
+(create_areas matriz1 areas aux_areas valores_possiveis)
+(print "areas")
+(print areas)
+(print "aux_areas")
+(print aux_areas)
+(print "valores_possiveis")
+(print valores_possiveis)
+(set_valores_possiveis matriz1 valores_possiveis)
+
+(defun exec(array)
+(dotimes (i (array-dimension array 0))
+  (dotimes (j (array-dimension array 1))
+    (dotimes (k (array-dimension array 2))
+      (format t "~a " (aref array i j k))))
+  (format t "~%"))
+
+)
+
+
+(defun main()
+    (setq complete NIL)
+    (exec matriz1)
+    (print matriz1)
+    (if complete 
+        (print "finalizalido") ;if cond true
+        (progn ;else
+            (setq achou_incomplete NIL)
+            * (destructuring-bind (n m o) (array-dimensions matriz1)
+                (loop for i from 0 below n do
+                    (loop for j from 0 below m do
+                        (if (= (aref matriz1 i j 0) 0) 
+                            (progn ; if cond true
+                                (setq complete NIL)
+                                (setq achou_incompleto T)
+                                (trySolve matriz1 i j)
+                            )
+                            ();else
+                        )   
+                    )
+                )
+            )
+            (if (not achou_incompleto)
+                (setq complete T)
+                (main);else
+            )
+        )
+    )
+    (print matriz1)
+)
+
+(main)
