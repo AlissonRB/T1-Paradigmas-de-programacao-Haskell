@@ -406,14 +406,17 @@
 (print aux_areas)
 (print "valores_possiveis")
 (print valores_possiveis)
+(terpri)
 (set_valores_possiveis matriz1 valores_possiveis)
 
 (defun exec(array)
-(dotimes (i (array-dimension array 0))
-  (dotimes (j (array-dimension array 1))
-    (dotimes (k (array-dimension array 2))
-      (format t "~a " (aref array i j k))))
-  (format t "~%"))
+    (dotimes (i (array-dimension array 0))
+      (dotimes (j (array-dimension array 1))
+        (dotimes (k (array-dimension array 2))
+          (format t "~a " (aref array j i k))
+        )(format t "~%")
+        )
+      (format t "~%"))
 
 )
 
