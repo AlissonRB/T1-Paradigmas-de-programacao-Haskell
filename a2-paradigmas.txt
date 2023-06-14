@@ -2,6 +2,9 @@
     (aref matriz i j 0)
 )
 
+(defun getcord(matriz i j)
+    (aref matriz i j 1)
+)
 
 (defun getX(matriz i j)
     (car (aref matriz i j 1))
@@ -71,7 +74,7 @@
             (
                 (0 (4 0) 107 2 (0))
                 (0 (4 1) 107 2 (0))
-                (0 (4 2) 109 3 (0))
+                (3 (4 2) 109 3 (0))
                 (0 (4 3) 110 5 (0))
                 (4 (4 4) 110 5 (0))
                 (2 (4 5) 110 5 (0))                
@@ -83,6 +86,134 @@
                 (0 (5 3) 109 3 (0))
                 (0 (5 4) 110 5 (0))
                 (0 (5 5) 110 5 (0))                
+            )
+        )
+    )
+)
+
+(setq matriz2
+    (make-array '(10 10 5)
+        :initial-contents
+        '(
+            (   
+                (4 (0 0) 100 4  (0))
+                (0 (0 1) 100 4 (0))
+                (4 (0 2) 105 4 (0))
+                (2 (0 3) 105 4 (0))
+                (0 (0 4) 106 2 (0))
+                (0 (0 5) 106 2 (0))
+                (6 (0 6) 116 7 (0))
+                (0 (0 7) 117 1 (0))
+                (7 (0 8) 123 7 (0))
+                (4 (0 9) 123 7 (0))
+            )
+            (
+                (3 (1 0) 100 4  (0))
+                (1 (1 1) 100 4 (0))
+                (0 (1 2) 105 4 (0))
+                (1 (1 3) 116 7 (0))
+                (0 (1 4) 116 7 (0))
+                (4 (1 5) 116 7 (0))
+                (0 (1 6) 116 7 (0))
+                (0 (1 7) 118 2 (0))
+                (0 (1 8) 123 7 (0))
+                (3 (1 9) 123 7 (0))
+            )
+            (
+                (0 (2 0) 101 4  (0))
+                (0 (2 1) 101 4 (0))
+                (1 (2 2) 105 4 (0))
+                (0 (2 3) 108 2 (0))
+                (6 (2 4) 113 7 (0))
+                (0 (2 5) 114 2 (0))
+                (3 (2 6) 116 7 (0))
+                (0 (2 7) 118 2 (0))
+                (5 (2 8) 123 7 (0))
+                (2 (2 9) 123 7 (0))
+            )
+            (
+                (0 (3 0) 101 4  (0))
+                (1 (3 1) 101 4 (0))
+                (0 (3 2) 107 2 (0))
+                (0 (3 3) 108 2 (0))
+                (4 (3 4) 113 7 (0))
+                (0 (3 5) 114 2 (0))
+                (0 (3 6) 116 7 (0))
+                (5 (3 7) 122 7 (0))
+                (0 (3 8) 122 7 (0))
+                (0 (3 9) 123 7 (0))
+            )
+            (
+                (2 (4 0) 102 3  (0))
+                (0 (4 1) 102 3 (0))
+                (0 (4 2) 107 2 (0))
+                (7 (4 3) 113 7 (0))
+                (0 (4 4) 113 7 (0))
+                (3 (4 5) 113 7 (0))
+                (0 (4 6) 115 5 (0))
+                (3 (4 7) 122 7 (0))
+                (6 (4 8) 122 7 (0))
+                (2 (4 9) 122 7 (0))
+            )
+            (
+                (0 (5 0) 102 3  (0))
+                (7 (5 1) 103 7 (0))
+                (0 (5 2) 103 7 (0))
+                (0 (5 3) 113 7 (0))
+                (0 (5 4) 113 7 (0))
+                (5 (5 5) 115 5 (0))
+                (3 (5 6) 115 5 (0))
+                (0 (5 7) 119 1 (0))
+                (0 (5 8) 122 7 (0))
+                (1 (5 9) 122 7 (0))
+            )
+            (
+                (0 (6 0) 103 7  (0))
+                (3 (6 1) 103 7 (0))
+                (0 (6 2) 103 7 (0))
+                (6 (6 3) 103 7 (0))
+                (3 (6 4) 112 6 (0))
+                (0 (6 5) 115 5 (0))
+                (2 (6 6) 115 5 (0))
+                (6 (6 7) 112 6 (0))
+                (2 (6 8) 121 4 (0))
+                (0 (6 9) 121 4 (0))
+            )
+            (
+                (4 (7 0) 104 5  (0))
+                (2 (7 1) 103 7 (0))
+                (0 (7 2) 109 4 (0))
+                (0 (7 3) 110 4 (0))
+                (0 (7 4) 112 6 (0))
+                (5 (7 5) 112 6 (0))
+                (0 (7 6) 112 6 (0))
+                (0 (7 7) 112 6 (0))
+                (4 (7 8) 120 6 (0))
+                (3 (7 9) 121 4 (0))
+            )
+            (
+                (2 (8 0) 104 5  (0))
+                (5 (8 1) 104 5 (0))
+                (0 (8 2) 109 4 (0))
+                (1 (8 3) 110 4 (0))
+                (2 (8 4) 110 4 (0))
+                (0 (8 5) 110 4 (0))
+                (2 (8 6) 111 4 (0))
+                (0 (8 7) 120 6 (0))
+                (3 (8 8) 120 6 (0))
+                (0 (8 9) 121 4 (0))
+            )
+            (
+                (1 (9 0) 104 5  (0))
+                (0 (9 1) 104 5 (0))
+                (0 (9 2) 109 4 (0))
+                (2 (9 3) 109 4 (0))
+                (4 (9 4) 111 4 (0))
+                (0 (9 5) 111 4 (0))
+                (1 (9 6) 111 4 (0))
+                (2 (9 7) 120 6 (0))
+                (0 (9 8) 120 6 (0))
+                (5 (9 9) 120 6 (0))
             )
         )
     )
@@ -130,16 +261,101 @@
     )
 )
 
+(setq areas2 
+        '((4 100)
+        (4 101)
+        (3 102)
+        (7 103)
+        (5 104)
+        (4 105)
+        (2 106)
+        (2 107)
+        (2 108)
+        (4 109)
+        (4 110)
+        (4 111)
+        (6 112)
+        (7 113)
+        (2 114)
+        (5 115)
+        (7 116)
+        (1 117)
+        (2 118)
+        (1 119)
+        (6 120)
+        (4 121)
+        (7 122)
+        (7 123))
+    )
+
+(setq aux_areas2
+        '((100)
+        (101)
+        (102)
+        (103)
+        (104)
+        (105)
+        (106)
+        (107)
+        (108)
+        (109)
+        (110)
+        (111)
+        (112)
+        (113)
+        (114)
+        (115)
+        (116)
+        (117)
+        (118)
+        (119)
+        (120)
+        (121)
+        (122)
+        (123)))
+
+(setq valores_possiveis2
+    '(()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+        ()
+    )
+)
 
 (defun tirar_possibilidades(matriz i j)
     ;Codigo para direita e esquerda só troca o (- j 1) e (+ j 1) e a verificação pra não ocorrer index_error
     ;esquerda
-    (print "doing")
+    ;(format t "Tirando ~d  dos vizinhos de ~a~%" (getvalor matriz i j) (getcord matriz i j))
     (if (/= j 0) 
         (if (= (getValor matriz i (- j 1)) 0) ; se o valor a esquerda for um 0
             (if (member (getvalor matriz i j) (getvalorespossiveis matriz i (- j 1)) )
-                (setvalorespossiveis matriz i (- j 1)
-                    (remove (getvalor matriz i j) (getvalorespossiveis matriz i (- j 1)) );lista
+                (progn
+                    (setvalorespossiveis matriz i (- j 1)
+                        (remove (getvalor matriz i j) (getvalorespossiveis matriz i (- j 1)) );lista
+                    )
+                    ;(if (= 1 (length (getvalorespossiveis matriz i (- j 1))))
+                    ;    (complete_unico matriz i (- j 1))
+                    ;)
                 )
             )
         )
@@ -148,8 +364,13 @@
     (if (< j (- (cadr (array-dimensions matriz)) 1))
         (if (= (getValor matriz i (+ j 1)) 0) ; se o valor a direita for um 0
             (if (member (getvalor matriz i j) (getvalorespossiveis matriz i (+ j 1)) )
-                (setvalorespossiveis matriz i (+ j 1)
-                    (remove (getvalor matriz i j) (getvalorespossiveis matriz i (+ j 1)) );lista
+                (progn
+                    (setvalorespossiveis matriz i (+ j 1)
+                        (remove (getvalor matriz i j) (getvalorespossiveis matriz i (+ j 1)) );lista
+                    )
+                    ;(if (= 1 (length (getvalorespossiveis matriz i (+ j 1))))
+                    ;    (complete_unico matriz i (+ j 1))
+                    ;)
                 )
             )
         )
@@ -158,8 +379,13 @@
     (if (/= i 0)
         (if (= (getvalor matriz (- i 1) j) 0)
             (if (member (getvalor matriz i j) (getvalorespossiveis matriz (- i 1) j))
-                (setvalorespossiveis matriz (- i 1) j
-                    (remove (getvalor matriz i j) (getvalorespossiveis matriz (- i 1) j))
+                (progn
+                    (setvalorespossiveis matriz (- i 1) j
+                        (remove (getvalor matriz i j) (getvalorespossiveis matriz (- i 1) j))
+                    )
+                    ;(if (= 1 (length (getvalorespossiveis matriz (- i 1) j)))
+                    ;    (complete_unico matriz (- i 1) j)
+                    ;)
                 )
             )
         )
@@ -168,8 +394,13 @@
     (if (< i (- (car (array-dimensions matriz)) 1) )
         (if (= (getvalor matriz (+ i 1) j) 0)
             (if (member (getvalor matriz i j) (getvalorespossiveis matriz (+ i 1) j))
-                (setvalorespossiveis matriz (+ i 1) j
-                    (remove (getvalor matriz i j) (getvalorespossiveis matriz (+ i 1) j))
+                (progn
+                    (setvalorespossiveis matriz (+ i 1) j
+                        (remove (getvalor matriz i j) (getvalorespossiveis matriz (+ i 1) j))
+                    )
+                    ;(if (= 1 (length (getvalorespossiveis matriz (+ i 1) j)))
+                    ;    (complete_unico matriz (+ i 1) j)
+                    ;)
                 )
             )
         )
@@ -185,25 +416,30 @@
             )
         )
     )
-    (print "done")
+    ;(print "done")
+    ;(terpri)
 )
 
-(defun setCell(matriz i j valor)
+(defun setCell(matriz i j valor name)
     (setf (aref matriz i j 0) valor)
     (setf (aref matriz i j 4) (list 0))
     (tirar_possibilidades matriz i j)
+    ;(format t "set(~a) ~d em  ~a~%" name (getvalor matriz i j) (getcord matriz i j))
 )
 
 
 (defun complete_unico(matriz i j) ; Função que ve se a quantidade de valores_possiveis pra serem inseridos naquela célula é 1, se for, o insere nela.
     (if (= (length (getValoresPossiveis matriz i j)) 1)
         (progn
-            (setcell matriz i j (car (getValoresPossiveis matriz i j)))
+            (setcell matriz i j (car (getValoresPossiveis matriz i j)) "complete_unico")
             T
         )
         NIL
     )
 )
+
+
+
 
 (defun area_coluna (matriz i j)
     ;(print "doing area_coluna")
@@ -240,52 +476,54 @@
 )
 
 (defun verificar_acima (matriz i j)
-    (print "doing verificar acima")
+    ;(print "doing verificar acima")
     (setq resolve nil)
     (if (/= (getx matriz i j) 0)
         (if (= (getIdArea matriz i j) (getIdArea matriz (- i 1) j))
             (if (/= (getvalor matriz (- i 1) j) 0) ;acima.valor != 0
                 (progn
-                    (print "valores_possiveis antes")
-                    (print (getValoresPossiveis matriz i j))
+                    ;(print "valores_possiveis antes")
+                    ;(print (getValoresPossiveis matriz i j))
                     (setq p (remove-if (lambda (valor) (> valor (getvalor matriz (- i 1) j)) ) (getvalorespossiveis matriz i j)))
-                    (print "valor acima")
-                    (print (getvalor matriz (- i 1) j))
+                    ;(print "valor acima")
+                    ;(print (getvalor matriz (- i 1) j))
                     (setValoresPossiveis matriz i j p)
-                    (print "valores_possiveis depois")
-                    (print (getvalorespossiveis matriz i j))
+                    ;(print "valores_possiveis depois")
+                    ;(print (getvalorespossiveis matriz i j))
                     (setq resolve T)
                 )
                 (if (= (length (getvalorespossiveis matriz i j)) 2) ;acima.valor = 0
                     (progn
-                        (print "reach here?")
-                        (setcell matriz i j (car (getvalorespossiveis matriz i j)))
-                        (setcell matriz (- i 1) j (car (getvalorespossiveis matriz (- i 1) j)))
+                        ;(print "reach here?")
+                        ;(print (getvalorespossiveis matriz i j))
+                        ;(print (getvalorespossiveis matriz (- i 1) j))
+                        (setcell matriz i j (car (getvalorespossiveis matriz i j)) "verificar_acima")
+                        ;(setcell matriz (- i 1) j (car (getvalorespossiveis matriz (- i 1) j)) "verificar_acima")
                         (setq resolve T)
                     )
                 )
             )
         )
     )
-    (print "done verificar acima")
+    ;(print "done verificar acima")
     resolve
 )
 
 (defun verificar_abaixo(matriz i j)
-    (print "doing verificar abaixo")
+    ;(print "doing verificar abaixo")
     (setq resolve nil)
     (if (/= (getx matriz i j) (- (car (array-dimensions matriz)) 1) ) ;evita index_error
         (if (= (getIdArea matriz i j) (getIdArea matriz (+ i 1) j)) ;verifica se estao na mesma area
             (progn
                 (if (= (getvalor matriz (+ i 1) j) (- (car (last (getvalorespossiveis matriz i j))) 1)) ;valor abaixo é um a menos que o maior possivel na celula
                     (progn
-                        (setcell matriz i j (last (getvalorespossiveis matriz i j) ) )
+                        (setcell matriz i j (car(last (getvalorespossiveis matriz i j) )) "verificar_abaixo1")
                         (setq resolve T)
                     )
                 )
                 (if (= (getvalor matriz (+ i 1) j) (- (getTamArea matriz i j) 1));valor abaixo é um a menos que o tamanho da area
                     (progn
-                        (setcell matriz i j (getTamarea matriz i j))
+                        (setcell matriz i j (getTamarea matriz i j) "verificar_abaixo2")
                         (setq resolve T)
                     )
                 )
@@ -294,19 +532,45 @@
                         (setValoresPossiveis matriz (+ i 1) j (remove (getTamArea matriz i j) (getvalorespossiveis matriz (+ i 1) j)) )
                     )
                 )
-                (if (= (length (getvalorespossiveis matriz i j) ) 2)
+                (if (and (and (= (length (getvalorespossiveis matriz i j) ) 2) (= (getvalor matriz (+ i 1) j) 0)) (equal (getvalorespossiveis matriz i j) (getvalorespossiveis matriz (+ i 1) j)))
                     (progn
-                        (setcell matriz (+ i 1) j (car (getvalorespossiveis matriz (+ i 1) j) ) )
-                        (setcell matriz i j (car (getvalorespossiveis matriz i j)))
+                        (setcell matriz i j (cadr (getvalorespossiveis matriz i j)) "verificar_abaixo4")
                         (setq resolve T)
                     )
                 )
             )
         )
     )
-    (print "done verificar abaixo")
+    ;(print "done verificar abaixo")
     resolve
 )
+
+(defun last_possible(matriz i j)
+   (loop for valor from 1 to (getTamArea matriz i j) do
+        (setq cnt 0)
+        (loop for x from 0 below (array-dimension matriz 0) do
+            (loop for y from 0 below (array-dimension matriz 1) do
+                (if (= (getIdArea matriz x y) (getIdArea matriz i j))
+                    (if (member valor (getvalorespossiveis matriz x y))
+                        (setq cnt (+ cnt 1))
+                    )
+                )
+            )
+        )
+        (if (= cnt 1)
+            (loop for x from 0 below (array-dimension matriz 0) do
+                (loop for y from 0 below (array-dimension matriz 1) do
+                    (if (= (getIdArea matriz x y) (getIdArea matriz i j))
+                        (if (member valor (getvalorespossiveis matriz x y))
+                            (setcell matriz x y valor "last_possible")
+                        )
+                    )
+                )
+            )
+        )
+   )
+)
+
 
 ;Tenta resolver qualquer de qualquer jeito a matriz até achar um, ou retorna NIL. Se achar uma forma em algum dos métodos, retorna T.
 (defun trySolve(matriz i j)
@@ -320,7 +584,7 @@
                     T
                     (if (verificar_abaixo matriz i j) 
                         T
-                        
+                        (if (last_possible matriz i j) T)
                     )
                 )
             )
@@ -341,38 +605,29 @@
 
 
 ;instancia areas
-(defun create_areas(x y aux v)
-    * (destructuring-bind (n m o) (array-dimensions matriz1)
+(defun create_areas(matriz y aux v)
+    * (destructuring-bind (n m o) (array-dimensions matriz)
     (loop for i from 0 below n do
         (loop for j from 0 below m do
-            (loop for k from 0 below o do
-                (if (= k 2)
-                    (progn
-                        (setq my_number (aref matriz1 i j 0));numero da celula da matriz
-                        (setq my_area (aref matriz1 i j k)); código da área
-                        (loop for q from 0 to (- (length y) 1) do ; passa por todas as areas na variável areas
-                            (progn
-                                (if (and (= my_area (car(nth q aux))) (/= my_number 0))
-                                    (push my_number (nth q y)) ;insere o valor já presente na matriz no inicio da lista
-                                )
-                            )
-                        )
-                    )
-                    ();else
+            (setq my_number (getvalor matriz i j));numero da celula da matriz
+            (setq my_area (getTamArea matriz i j)); código da área
+            (loop for q from 0 below (length y) do ; passa por todas as areas na variável areas
+                (if (and (= my_area (car(nth q aux))) (/= my_number 0))
+                    (push my_number (nth q y)) ;insere o valor já presente na matriz no inicio da lista
                 )
             )
         )
     )
-    (print "areas")
+    ;(print "areas")
     ;when de loop end
     (loop for q  from 0 to (- (length y) 1) do ; passa por todas as áreas na variável areas(y)
         (progn
             (nreverse (nth q y)) ;inverte a lista pois todos os valores foram inseridos no início
-            (print (nth q y))
+            ;(print (nth q y))
         )
         
     )
-    (print "valores_possiveis")
+    ;(print "valores_possiveis")
     (loop for i from 0 to (- (length y) 1) do ;passa por todas as áreas na varias areas(y)
         (setq todos_valores (create_area_completa(cadr(nth i y))))
         (loop for j from 2 to (length (nth i y)) do ;passa por todos os valores que já estão na area
@@ -382,7 +637,7 @@
             )
         )
         (setf (nth i v) todos_valores)
-        (print (nth i v))
+        ;(print (nth i v))
     )
     )
 )
@@ -392,24 +647,16 @@
     (loop for i from 0 below n do
         (loop for j from 0 below m do
             (if (= (getvalor matriz i j) 0)
-                (setf (aref matriz i j 4) (nth (- (getIdArea matriz i j) 100) valores))
+                (setValorespossiveis matriz i j (nth (- (getIdArea matriz i j) 100) valores))
             )
         )
     )
     )
 )
 ;------------------------------------------------------------- inicia aqui--------------------------------------------------------------
-(create_areas matriz1 areas aux_areas valores_possiveis)
-(print "areas")
-(print areas)
-(print "aux_areas")
-(print aux_areas)
-(print "valores_possiveis")
-(print valores_possiveis)
-(terpri)
-(set_valores_possiveis matriz1 valores_possiveis)
 
 (defun exec(array)
+    (terpri)
     (dotimes (i (array-dimension array 0))
       (dotimes (j (array-dimension array 1))
         (dotimes (k (array-dimension array 2))
@@ -420,36 +667,91 @@
 
 )
 
+(defun printV(array)
+    (terpri)
+    (dotimes (i (array-dimension array 0))
+        (dotimes (j (array-dimension array 1))
+            (format t "~a " (aref array i j 0))
+        )
+        (format t "~%")
+    )
 
-(defun main()
+)
+
+
+(defun printVP(matriz)
+    (terpri)
+    (let ( (largura (array-dimension matriz 1)) )
+        (dotimes (i largura)
+            (dotimes (j largura)
+                (format t "~a" (aref matriz i j 4))
+                (let ((espacos (- largura (length (getValoresPossiveis matriz i j)) )))
+                    (dotimes (m espacos)
+                        (format t "  ")
+                    )
+                )
+            )
+            (format t "~%")
+        )
+    )
+)
+
+(defun tirar_primeiras_possibilidades (matriz)
+    (dotimes (i (array-dimension matriz 0))
+        (dotimes (j (array-dimension matriz 1))
+            (if (/= 0 (getvalor matriz i j))
+                (tirar_possibilidades matriz i j)
+            )
+        )
+    )
+)
+
+
+(defun instancia(matriz areas aux vp)
+    (create_areas matriz areas aux vp)
+    ;(print "areas")
+    ;(print areas)
+    ;(print "aux_areas")
+    ;(print aux)
+    ;(print "valores_possiveis")
+    ;(print vp)
+    (set_valores_possiveis matriz vp)
+    (tirar_primeiras_possibilidades matriz)
+)
+
+
+(instancia matriz2 areas2 aux_areas2 valores_possiveis2)
+
+(defun main(matriz)
     (setq complete NIL)
-    (exec matriz1)
-    (print matriz1)
+    ;(exec matriz)
+    (printV matriz)
+    (printVP matriz)
+    ;(print matriz)
     (if complete 
         (print "finalizalido") ;if cond true
         (progn ;else
-            (setq achou_incomplete NIL)
-            * (destructuring-bind (n m o) (array-dimensions matriz1)
+            (setq achou_incompleto NIL)
+            * (destructuring-bind (n m o) (array-dimensions matriz)
                 (loop for i from 0 below n do
                     (loop for j from 0 below m do
-                        (if (= (aref matriz1 i j 0) 0) 
+                        (if (= (getvalor matriz i j) 0) 
                             (progn ; if cond true
                                 (setq complete NIL)
                                 (setq achou_incompleto T)
-                                (trySolve matriz1 i j)
+                                (trySolve matriz i j)
                             )
                             ();else
                         )   
                     )
                 )
             )
-            (if (not achou_incompleto)
-                (setq complete T)
-                (main);else
+            (if achou_incompleto
+                (main matriz)
+                (print "finalizalido");else
             )
         )
     )
-    (print matriz1)
 )
 
-(main)
+(main matriz2)
